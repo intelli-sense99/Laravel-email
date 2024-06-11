@@ -1,0 +1,99 @@
+<>-------------------------------------------------------default laravel auth package registration setup------------------------------------------<<<
+
+<1> In User modal
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+<2> implements MustVerifyEmail (with Users Class)
+<3>routing setup
+<>-----------------------------------<<
+
+Auth::routes([
+    'verify' => true,
+]);
+
+<>-----------------------------------<<
+<4>check email box the verify it.
+
+
+
+
+<>-------------------------------------------------------custom email setup------------------------------------------<<<
+
+<1> 2 step varification then save password 
+<2> .env cofigration
+<>--------------------------<<
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=j3rry9876@gmail.com
+MAIL_PASSWORD=jfjmqtlvpcfxpapl 
+MAIL_ENCRYPTION=tls 
+MAIL_FROM_ADDRESS="j3rry9876@gmail.com"
+MAIL_FROM_NAME="${APP_NAME}"
+<>--------------------------<<
+
+<3>php artisan make:mail MailClassName
+<>--------------------------<<
+class WelcomeEmail extends Mailable
+{
+    use Queueable, SerializesModels;
+
+    public $mailmessage;
+    public $mailsubject;
+    public $name;
+
+    public function __construct($message, $subject,$name)
+    {
+        $this->mailmessage = $message;
+        $this->mailsubject = $subject;
+        $this->name = $name;
+    }
+
+    public function envelope(): Envelope
+    {
+        return new Envelope(
+            // subject: 'Welcome Email',
+            subject: $this->subject,
+        );
+    }
+   
+    public function content(): Content
+    {
+        return new Content(
+            view: 'mail.mail_temp',
+        );
+    }    
+
+    /**
+     * Get the attachments for the message.
+     *
+     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     */
+    public function attachments(): array
+    {
+        return [];
+    }
+}
+<>--------------------------<<
+
+
+<4>php artisan make:controller MailController
+
+<>--------------------------<<
+use App\Mail\WelcomeEmail;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+
+ public function sendEmail()
+    {
+        $toEmail = 'hlo000kumar@gmail.com';
+        $msg = 'Congratulations, Mail Send Successfully';
+        $subject = 'Subject of This Email';
+        $name = 'VIKAS KUMAR';
+
+        $response = Mail::to($toEmail)->Send(new WelcomeEmail($msg, $subject, $name));
+        dd($response);
+    }
+<>--------------------------<<
+
+
+<5> Route::get('/email/sent', [EmailController::class, 'sendEmail'])->name('email.sent');
