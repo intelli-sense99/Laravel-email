@@ -24,5 +24,9 @@ Auth::routes([
 ]);
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('verified');
+
+
+
+// for custom email
 Route::get('/email/view', [EmailController::class, 'EmailView'])->name('email.view');
 Route::get('/email/sent', [EmailController::class, 'sendEmail'])->name('email.sent');
